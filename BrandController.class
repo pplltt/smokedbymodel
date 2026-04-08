@@ -1,0 +1,64 @@
+package com.example.smokedbymodel.services;
+
+import com.example.smokedbymodel.models.Brand;
+import com.example.smokedbymodel.models.Review;
+import com.example.smokedbymodel.models.User;
+import com.example.smokedbymodel.repositories.ReviewRepository;
+import com.example.smokedbymodel.dto.ReviewForm;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.DoubleSummaryStatistics;
+import java.util.List;
+
+@Service
+public class ReviewService {
+
+    @Autowired
+    private ReviewRepository reviewRepository;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired BrandService brandService;
+
+    @Transactional
+    public void saveNewReview(ReviewForm form, String username, Long brandId) {
+        User user = userService.findByUsername(username); // - этот метод уже ищет User
+        Brand brand = brandService.findById(brandId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Brand not found during submission."));
+
+        Review review = new Review();
+
+        review.setTitle(form.getTitle());
+        review.setDescription(form.getDescription());
+        review.setRating(form.getRating());
+
+        review.setUser(user);
+        review.setBrand(brand);
+
+        user.getReviews().add(review);
+        brand.getReviews().add(review);
+
+        reviewRepository.save(review);
+    }
+
+    public List<Review> findReviewsByBrandId(Long brandId) {
+        return reviewRepository.findByBrandId(brandId);
+    }
+
+    public double getAverageRating(List<Review> reviews) {
+        if (reviews == null || reviews.isEmpty()) {
+            return 0.0;
+        }
+
+        DoubleSummaryStatistics stats = reviews.stream()
+                .mapToDouble(Review::getRating)
+                .summaryStatistics();
+
+        return stats.getAverage();
+    }
+}

@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select a Brand</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+          background-color: #f8f9fa;
+          color: #333;
+          padding: 40px 20px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          min-height: 100vh;
+        }
+
+        /* Заголовок */
+        h1 {
+          color: #5D3559;
+          text-align: center;
+          font-size: 2.8rem;
+          margin-bottom: 40px;
+          font-weight: 400;
+        }
+
+        /* Кнопка возврата */
+        .nav-btn {
+          display: block;
+          width: 280px;
+          padding: 16px;
+          margin-bottom: 50px;
+          background-color: #5D3559;
+          color: white;
+          text-align: center;
+          text-decoration: none;
+          border-radius: 22px;
+          font-weight: 500;
+          font-size: 1.1rem;
+          transition: all 0.3s ease;
+          box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .nav-btn:hover {
+          background-color: #6e3f6b;
+          transform: translateY(-3px);
+        }
+
+        /* Поиск */
+        .search-container {
+          max-width: 800px;
+          width: 100%;
+          display: flex;
+          gap: 10px;
+          margin-bottom: 40px;
+        }
+
+        .search-container input[type="text"] {
+          flex-grow: 1;
+          padding: 14px 18px;
+          border: 2px solid #ccc;
+          border-radius: 22px;
+          font-size: 1rem;
+          transition: border-color 0.3s ease;
+        }
+
+        .search-container input[type="text"]:focus {
+          border-color: #5D3559;
+          outline: none;
+        }
+
+        .search-container button {
+          padding: 14px 26px;
+          background-color: #5D3559;
+          color: white;
+          border: none;
+          border-radius: 22px;
+          cursor: pointer;
+          font-size: 1rem;
+          font-weight: 500;
+          transition: all 0.3s ease;
+        }
+
+        .search-container button:hover {
+          background-color: #6e3f6b;
+        }
+
+        .brands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            justify-items: center;
+        }
+
+        .brand-card {
+            width: 100%;
+            max-width: 320px;
+            background-color: white;
+            border-radius: 18px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+
+        .brand-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .brand-card h2 {
+          color: #5D3559;
+          margin-bottom: 20px;
+          font-size: 1.6rem;
+          text-align: center;
+          border-bottom: 2px solid #eee;
+          padding-bottom: 10px;
+        }
+
+        /* Кнопки действий */
+        .brand-actions {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .brand-actions button {
+          width: 100%;
+          padding: 14px;
+          border-radius: 22px;
+          font-weight: 500;
+          font-size: 1rem;
+          transition: all 0.3s ease;
+          cursor: pointer;
+        }
+
+        .btn-view {
+          background-color: #E6E6FA;
+          color: #5D3559;
+          border: 1px solid #5D3559;
+        }
+
+        .btn-view:hover {
+          background-color: #D8BFD8;
+        }
+
+        .btn-review {
+          background-color: #5D3559;
+          color: white;
+          border: none;
+          box-shadow: 0 4px 10px rgba(93, 53, 89, 0.3);
+        }
+
+        .btn-review:hover {
+          background-color: #6e3f6b;
+          transform: translateY(-2px);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1000px) {
+          .brand-card {
+            width: calc(50% - 15px);
+          }
+        }
+
+        @media (max-width: 600px) {
+          .brand-card {
+            width: 100%;
+          }
+
+          h1 {
+            font-size: 2rem;
+          }
+
+          .nav-btn {
+            width: 220px;
+            padding: 12px;
+          }
+        }
+    </style>
+</head>
+
+<body>
+<h1>Select The Brand</h1>
+
+<a th:href="@{/home}" class="nav-btn">Back to Main Menu</a>
+
+<div class="search-container">
+    <form th:action="@{/brands}" method="get" style="display: flex; width: 100%; gap: 10px;">
+        <input type="text" name="search" th:value="${searchQuery}" placeholder="Find a brand..." autofocus>
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+<div th:if="${not #lists.isEmpty(brands)}" class="brands-grid">
+    <div th:each="brand : ${brands}" class="brand-card">
+        <h2 th:text="${brand.name}">Brand Name</h2>
+
+        <div class="brand-actions">
+            <a th:href="@{/brands/{brandId}(brandId=${brand.id})}">
+                <button type="button" class="btn-view">View All Reviews</button>
+            </a>
+
+            <a th:href="@{/brands/{brandId}/reviews/new(brandId=${brand.id})}">
+                <button type="button" class="btn-review">Write a Review</button>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div th:unless="${not #lists.isEmpty(brands)}" style="text-align: center; margin-top: 50px;">
+    <p th:if="${searchQuery != ''}">
+        No brands found for the search query: <strong><span th:text="${searchQuery}"></span></strong>
+    </p>
+    <p th:unless="${searchQuery != ''}">The brand list is empty.</p>
+</div>
+</body>
+</html>

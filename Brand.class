@@ -1,0 +1,8 @@
+MERGE INTO brands (name) KEY(name) VALUES ('Gucci');
+MERGE INTO brands (name) KEY(name) VALUES ('Prada');
+MERGE INTO brands (name) KEY(name) VALUES ('Celine');
+MERGE INTO brands (name) KEY(name) VALUES ('Chanel');
+MERGE INTO brands (name) KEY(name) VALUES ('Balenciaga');
+MERGE INTO brands (name) KEY(name) VALUES ('Valentino');
+MERGE INTO brands (name) KEY(name) VALUES ('Hermes');
+MERGE INTO brands (name) KEY(name) VALUES ('Balmain');

@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write a Review</title>
+
+    <!-- Шрифт проекта -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+          background-color: #f8f9fa;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          padding: 40px 20px;
+          color: #333;
+        }
+
+        .container {
+          width: 100%;
+          max-width: 800px;
+          background: #fff;
+          border-radius: 18px;
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+          padding: 50px 60px;
+          text-align: center;
+        }
+
+        h1 {
+          color: #5D3559;
+          font-size: 2.4rem;
+          font-weight: 400;
+          margin-bottom: 35px;
+          border-bottom: 2px solid #eee;
+          padding-bottom: 15px;
+        }
+
+        h1 span {
+          font-weight: 500;
+        }
+
+        form {
+          text-align: left;
+        }
+
+        .form-group {
+          margin-bottom: 25px;
+        }
+
+        label {
+          display: block;
+          font-weight: 500;
+          color: #5D3559;
+          margin-bottom: 10px;
+          font-size: 1rem;
+        }
+
+        input[type="text"],
+        textarea {
+          width: 100%;
+          padding: 14px 18px;
+          border-radius: 12px;
+          border: 1.5px solid #ccc;
+          background: #f8f8f8;
+          font-size: 1rem;
+          transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+          outline: none;
+          border-color: #5D3559;
+          background: #fff;
+          box-shadow: 0 0 8px rgba(93, 53, 89, 0.2);
+        }
+
+        textarea {
+          resize: vertical;
+          height: 160px;
+        }
+
+        .error-message {
+          color: #E33E33;
+          font-size: 0.9em;
+          margin-top: 5px;
+        }
+
+        /* Шкала оценки */
+        .rating-options {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 8px;
+          margin-top: 10px;
+        }
+
+        .rating-options input[type="radio"] {
+          display: none;
+        }
+
+        .rating-options label {
+          display: inline-block;
+          width: 40px;
+          height: 40px;
+          line-height: 40px;
+          border-radius: 50%;
+          text-align: center;
+          border: 2px solid #ccc;
+          background-color: #f9f9f9;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-weight: 500;
+          color: #5D3559;
+        }
+
+        .rating-options label:hover {
+          background-color: #e6e6fa;
+          border-color: #5D3559;
+        }
+
+        .rating-options input[type="radio"]:checked + label {
+          background-color: #5D3559;
+          color: white;
+          border-color: #5D3559;
+          transform: scale(1.05);
+        }
+
+        /* Кнопка отправки */
+        button[type="submit"] {
+          display: block;
+          width: 100%;
+          padding: 16px;
+          background-color: #5D3559;
+          color: white;
+          border: none;
+          border-radius: 22px;
+          font-size: 1.2rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 6px 12px rgba(93, 53, 89, 0.3);
+          margin-top: 30px;
+        }
+
+        button[type="submit"]:hover {
+          background-color: #6e3f6b;
+          transform: translateY(-2px);
+        }
+
+        /* Ссылка возврата */
+        .back-link {
+          display: inline-block;
+          margin-top: 30px;
+          color: #5D3559;
+          text-decoration: none;
+          font-weight: 500;
+          transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+          color: #6e3f6b;
+          text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+          .container {
+            padding: 35px 25px;
+          }
+          h1 {
+            font-size: 1.8rem;
+          }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h1>Write a Review for <span th:text="${brand.name}">Brand Name</span></h1>
+
+    <form th:action="@{/brands/{brandId}/reviews(brandId=${brand.id})}" th:object="${reviewForm}" method="post">
+        <div class="form-group">
+            <label for="title">Review Title:</label>
+            <input type="text" id="title" th:field="*{title}" placeholder="Enter a short, catchy title" />
+            <span class="error-message" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Your Detailed Review:</label>
+            <textarea id="description" th:field="*{description}" placeholder="Share your thoughts, impressions, and experience..."></textarea>
+            <span class="error-message" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Rating (1–10):</label>
+            <div class="rating-options">
+                <th:block th:each="i : ${#numbers.sequence(1, 10)}">
+                    <input type="radio" th:id="|rating-${i}|" th:field="*{rating}" th:value="${i}" required>
+                    <label th:for="|rating-${i}|" th:text="${i}"></label>
+                </th:block>
+            </div>
+            <span class="error-message" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></span>
+        </div>
+
+        <button type="submit">Submit Review</button>
+    </form>
+
+    <a th:href="@{/brands}" class="back-link">← Back to Brand Selection</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+package com.example.smokedbymodel.services;
+
+import com.example.smokedbymodel.models.Brand;
+import com.example.smokedbymodel.repositories.BrandRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class BrandService {
+
+    @Autowired
+    private BrandRepository brandRepository;
+
+    public List<Brand> getAllBrands() {
+        return brandRepository.findAll();
+    }
+
+    public List<Brand> searchBrands(String query) {
+
+        if (query == null || query.trim().isEmpty()) {
+            return getAllBrands();
+        }
+
+        return brandRepository.findByNameContainingIgnoreCase(query);
+    }
+
+    public Optional<Brand> findById(Long id) {
+        return brandRepository.findById(id);
+    }
+}

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${brand.name} + ' Reviews'">Brand Reviews</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            padding: 40px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #5D3559;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        .summary-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .rating-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #662660;
+            margin-bottom: 5px;
+        }
+        .rating-label {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        /* Review Card Styles */
+        .review-card {
+            background-color: white;
+            border-left: 5px solid #E6E6FA; /* Светло-фиолетовая граница */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .review-title {
+            color: #5D3559;
+            font-size: 1.4rem;
+            margin: 0;
+        }
+        .review-rating {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #5D3559;
+        }
+        .review-user {
+            font-size: 0.9rem;
+            color: #999;
+        }
+        .review-body {
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            color: #5D3559;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${brand.name}">Brand Name</h1>
+
+    <div class="summary-box">
+        <div th:if="${reviews.empty}" class="rating-label">
+            No reviews yet. Be the first to write one!
+        </div>
+        <div th:unless="${reviews.empty}">
+            <div class="rating-display" th:text="${averageRating}">4.5</div>
+            <div class="rating-label">
+                Average Rating (<span th:text="${reviewCount}">10</span> Reviews)
+            </div>
+        </div>
+    </div>
+
+    <div th:each="review : ${reviews}" class="review-card">
+        <div class="review-header">
+            <h2 class="review-title" th:text="${review.title}">Great Product!</h2>
+            <span class="review-rating" th:text="${review.rating} + '/10'">9/10</span>
+        </div>
+
+        <p class="review-user">Reviewed by: <strong th:text="${review.user.username}">user123</strong></p>
+
+        <div class="review-body" th:text="${review.description}">
+            This is the detailed description of the review...
+        </div>
+    </div>
+
+    <div th:if="${reviews.empty}" style="text-align: center; color: #666;">
+        <p>Write the first review for this brand!</p>
+    </div>
+
+    <a th:href="@{/brands}" class="back-link">← Back to Brand Selection</a>
+</div>
+</body>
+</html>
